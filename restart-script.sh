@@ -1,29 +1,42 @@
 #!/bin/bash
 
-# Define the services to stop
 services=("geth" "lighthouse-beacon" "lighthouse-validator")
 
-# Stop the services
+# Stop services and check their status
 for service in "${services[@]}"; do
-    echo "Stopping $service..."
-    sudo systemctl stop "$service"
+  echo "Stopping $service..."
+  sudo systemctl stop "$service"
+
+  status=$(sudo systemctl is-active "$service")
+
+  if [ "$status" = "inactive" ]; then
+    echo "$service has stopped."
+  else
+    echo "Failed to stop $service."
+  fi
+  echo "-----------------------"
 done
 
-# Check the status of the services
-for service in "${services[@]}"; do
-    echo "Checking status of $service..."
-    sudo systemctl status "$service"
-    echo "--------------------------------"
-done
+# Prompt for shutdown or reboot
+echo "What would you like to do?"
+echo "1. Shutdown"
+echo "2. Reboot"
+echo "3. Cancel"
+read -r option
 
-# Prompt the user to shut down or reboot the server
-read -p "Do you want to (s)hut down, (r)eboot, or (c)ancel? " choice
-
-case "$choice" in
-    s|S) echo "Shutting down the server..."
-         sudo shutdown -h now ;;
-    r|R) echo "Rebooting the server..."
-         sudo reboot ;;
-    c|C) echo "Cancelled. No action taken." ;;
-    *) echo "Invalid choice. No action taken." ;;
+case $option in
+  1)
+    echo "Shutting down..."
+    sudo shutdown -h now
+    ;;
+  2)
+    echo "Rebooting..."
+    sudo reboot
+    ;;
+  3)
+    echo "Canceled."
+    ;;
+  *)
+    echo "Invalid option."
+    ;;
 esac
