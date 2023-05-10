@@ -46,14 +46,14 @@ openssl rand -hex 32 | sudo tee blockchain/jwt.hex > /dev/null
 
 # Start Geth Docker container
 sudo docker run -d --name geth --network=host -p 30303:30303 -p 8545:8545 \
--v /home/admxn/blockchain:/blockchain \
+-v /home/ubuntu/blockchain:/blockchain \
 registry.gitlab.com/pulsechaincom/go-pulse:v2.1.1 \
 --pulsechain-testnet-v4 \
 --authrpc.jwtsecret=/blockchain/jwt.hex \
 --datadir=/blockchain
 
 # Start Beacon Chain Docker container
-sudo docker run -d --name beacon --network=host -p 4000:4000/tcp -p 12000:12000/udp -p 13000:13000/tcp -v /home/admxn/blockchain:/blockchain registry.gitlab.com/pulsechaincom/prysm-pulse/beacon-chain \
+sudo docker run -d --name beacon --network=host -p 4000:4000/tcp -p 12000:12000/udp -p 13000:13000/tcp -v /home/ubuntu/blockchain:/blockchain registry.gitlab.com/pulsechaincom/prysm-pulse/beacon-chain \
 --pulsechain-testnet-v4 --jwt-secret=/blockchain/jwt.hex --datadir=/blockchain \
 --checkpoint-sync-url=https://checkpoint.v4.testnet.pulsechain.com --genesis-beacon-api-url=https://checkpoint.v4.testnet.pulsechain.com \
 --suggested-fee-recipient=0xeCEDe74770c7371134b203572F7926fce235AB16 \

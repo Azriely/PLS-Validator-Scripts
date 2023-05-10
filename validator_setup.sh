@@ -1,7 +1,7 @@
 cd ~
 # Start Validator Docker container
-sudo docker run -it -v /home/admxn/blockchain/validator_keys:/keys \
--v /home/admxn/blockchain/pw:/wallet \
+sudo docker run -it -v /home/ubuntu/blockchain/validator_keys:/keys \
+-v /home/ubuntu/blockchain/pw:/wallet \
 --name validator \
 registry.gitlab.com/pulsechaincom/prysm-pulse/validator \
 accounts import --keys-dir=/keys --wallet-dir=/wallet \
@@ -11,8 +11,8 @@ sudo docker stop -t 180 validator
 
 sudo docker container prune
 
-sudo docker run -d --network=host -v /home/admxn/blockchain/validator_keys:/keys \
--v /home/admxn/blockchain/pw:/wallet \
+sudo docker run -d --network=host -v /home/ubuntu/blockchain/validator_keys:/keys \
+-v /home/ubuntu/blockchain/pw:/wallet \
 --name validator \
 registry.gitlab.com/pulsechaincom/prysm-pulse/validator --pulsechain-testnet-v4 \
 --wallet-dir=/wallet --wallet-password-file=/wallet/pw.txt \
