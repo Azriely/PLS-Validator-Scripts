@@ -23,5 +23,5 @@ sudo docker update --restart always geth
 sudo docker update --restart always beacon
 sudo docker update --restart always validator
 
-# Change permissions of validator deposit (**run this after importing keys**)
-sudo chmod 777 deposit_data-**********.json *Change
+# Change permissions of validator deposit
+sudo chmod 777 deposit_data-1683359412.json
