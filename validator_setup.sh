@@ -1,3 +1,7 @@
+# Before running copy your validator keys created on another computer to your ~ directory
+cd blockchain
+sudo cp -r ~/validator_keys .
+
 cd ~
 # Start Validator Docker container
 sudo docker run -it -v /home/ubuntu/blockchain/validator_keys:/keys \
