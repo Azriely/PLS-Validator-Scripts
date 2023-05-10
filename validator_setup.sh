@@ -1,8 +1,11 @@
 # Before running copy your validator keys created on another computer to your ~ directory
-cd blockchain
+cd ~/blockchain
 sudo cp -r ~/validator_keys .
 
+# Remove validator keys from ~ directory after copying them to blockchain
 cd ~
+sudo rm -rf validator_keys
+
 # Start Validator Docker container
 sudo docker run -it -v /home/ubuntu/blockchain/validator_keys:/keys \
 -v /home/ubuntu/blockchain/pw:/wallet \
@@ -28,4 +31,5 @@ sudo docker update --restart always beacon
 sudo docker update --restart always validator
 
 # Change permissions of validator deposit
+cd ~/blockchain/validator_keys
 sudo chmod 777 deposit_data-1683359412.json
