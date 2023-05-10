@@ -60,16 +60,6 @@ sudo docker run -d --name beacon --network=host -p 4000:4000/tcp -p 12000:12000/
 --min-sync-peers=1 \
 --p2p-host-ip=$(curl -s https://checkip.amazonaws.com) 
 
-# Configure container restart policy Geth and Beacon
-sudo docker update --restart always geth
-sudo docker update --restart always beacon
-
-# Wait for validator_keys folder to appear in blockchain directory
-while [ ! -d "/home/admxn/blockchain/validator_keys" ]; do
-    echo "Waiting for validator_keys folder to appear in blockchain directory..."
-    sleep 600
-done
-
 # Start Validator Docker container
 sudo docker run -d --network=host -v /home/admxn/blockchain/validator_keys:/keys \
 -v /home/admxn/blockchain/pw:/wallet \
@@ -79,7 +69,9 @@ registry.gitlab.com/pulsechaincom/prysm-pulse/validator \
 accounts import --keys-dir=/keys --wallet-dir=/wallet \
 --password-file=/wallet/pw.txt
 
-# Configure container restart policy Validator
+# Configure container restart policy
+sudo docker update --restart always geth
+sudo docker update --restart always beacon
 sudo docker update --restart always validator
 
 # Change permissions of validator deposit
