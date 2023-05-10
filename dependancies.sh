@@ -31,6 +31,7 @@ sudo apt-get update -y
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 
 # Create directory and password file
+cd ~
 mkdir blockchain
 sudo chmod 777 blockchain
 cd blockchain
