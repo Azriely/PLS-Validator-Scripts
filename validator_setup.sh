@@ -74,6 +74,47 @@ sudo docker update --restart always geth
 sudo docker update --restart always beacon
 sudo docker update --restart always validator
 
-# Change permissions of validator deposit
-sudo chmod 777 /home/admxn/blockchain/validator_keys/deposit_data-*.json
+# Monitor syncing
+while :
+do
+# Check if Geth is synced
+# Start Geth and Beacon Chain Docker containers
+sudo docker-compose up -d
 
+# Wait for both containers to fully sync
+while true; do
+  geth_sync=$(sudo docker logs geth 2>&1 | grep "Imported new chain segment" | tail -n 1 | awk '{print $11}' | tr -d ',')
+  beacon_sync=$(sudo docker logs beacon 2>&1 | grep "Successfully updated latest finalized block" | tail -n 1 | awk '{print $11}' | tr -d ',')
+  if [ -n "$geth_sync" ] && [ -n "$beacon_sync" ]; then
+    echo "Geth and Beacon Chain are fully synced."
+    break
+  fi
+  echo "Geth syncing at block height $geth_sync."
+  echo "Beacon Chain syncing at block height $beacon_sync."
+  sleep 300
+done
+
+# Wait for validator keys to be available in blockchain directory
+while [ ! -f "/home/$USER/blockchain/validator_keys/deposit_data-*.json" ]; do
+  echo "Waiting for validator keys to be available in /home/$USER/blockchain/validator_keys directory."
+  sleep 300
+done
+
+# Start Validator Docker container
+sudo docker run -d --network=host -v /home/$USER/blockchain/validator_keys:/keys \
+-v /home/$USER/blockchain/pw:/wallet \
+--name validator \
+registry.gitlab.com/pulsechaincom/prysm-pulse/validator \
+--pulsechain-testnet-v4 \
+accounts import --keys-dir=/keys --wallet-dir=/wallet \
+--password-file=/wallet/pw.txt
+
+# Configure container restart policy
+sudo docker update --restart always geth
+sudo docker update --restart always beacon
+sudo docker update --restart always validator
+
+# Change permissions of validator deposit
+sudo chmod 777 /home/$USER/blockchain/validator_keys/deposit_data-*.json
+
+echo "Validator container is now running."
